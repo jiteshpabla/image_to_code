@@ -4,7 +4,7 @@ from htmlentitydefs import name2codepoint
 from PIL import Image
 from pytesseract import image_to_string
 from pygments import highlight
-from pygments.lexers import PythonLexer, guess_lexer
+from pygments.lexers import PythonLexer, ArduinoLexer, CppLexer,CLexer, TextLexer, LassoCssLexer,guess_lexer
 from pygments.formatters import HtmlFormatter
 import os
 import img_prcs
@@ -18,10 +18,18 @@ class MyHTMLParser(HTMLParser):
 		def handle_starttag(self, tag, attrs):
 			if tag == 'span':
 				for attr in attrs:
-					#print attr[1]
-					if attr[1] == 'c1' :
+					
+					print attr[1]
+
+					if attr[1] == 'err' :
+						self.tg = self.textbuffer.create_tag( foreground="#FF0000")
+
+					elif attr[1] == 'c1' :
 						self.tg = self.textbuffer.create_tag( foreground="#408080") 
 
+					elif attr[1] == 'n' :
+						self.tg = self.textbuffer.create_tag( foreground="#000011") 
+					
 					elif attr[1] == 'k' :
 						self.tg = self.textbuffer.create_tag( foreground="#008000") 
 
@@ -206,6 +214,7 @@ class MyHTMLParser(HTMLParser):
 					
 					elif attr[1] == 'il' :
 						self.tg = self.textbuffer.create_tag(  foreground="#666666") 
+
 					
 
 
@@ -247,7 +256,17 @@ class PyApp:
 		#code = img_prcs.image_enhance(str)
 		code = image_to_string(Image.open(str))
 		text_buffer = text.get_buffer()
-		html = highlight(code, PythonLexer(), HtmlFormatter())
+
+		copy=code.replace('\n',' ')
+		lex=guess_lexer(copy)
+		print lex
+		if isinstance(lex,PythonLexer) == True :
+			lang.set_active(3)
+			html = highlight(code, PythonLexer(), HtmlFormatter())
+
+		elif isinstance(lex,ArduinoLexer) == True or isinstance(lex,TextLexer) or isinstance(lex,LassoCssLexer) or isinstance(lex,CppLexer) == True  :
+			lang.set_active(1)
+			html = highlight(code, CppLexer(), HtmlFormatter())
 
 		htmlfile = open("html_file.html","w")
 		htmlfile.write("%s" %html)
@@ -260,12 +279,7 @@ class PyApp:
 		str2.set_text(code)
 		text.set_buffer(str2)
 		'''
-		copy=code.replace('\n',' ')
-
-		#print code
-		lex=guess_lexer(copy)
-		if isinstance(lex,PythonLexer) == True :
-			lang.set_active(3)
+		
 
 
 	def destroy(self,widget):
