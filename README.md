@@ -46,3 +46,9 @@ Others:
 * [NumPy](http://www.numpy.org/)
 * [SciPy](https://www.scipy.org/)
 
+### Developers
+1. Jitesh Pabla
+2. Sajal Subodh
+
+### Mentor Assigned For This Project By JDEV(Jaypee Developer's group)
+* Shivan Trivedi
